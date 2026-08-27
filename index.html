@@ -1,0 +1,2342 @@
+<!DOCTYPE html>
+<html lang="sr">
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Website Brief Generator — Besplatni Web Brief</title>
+
+    <meta
+        name="description"
+        content="Kreirajte profesionalni brief za izradu web sajta za nekoliko minuta. Besplatno generišite PDF brief."
+    >
+
+    <meta
+        name="robots"
+        content="index, follow"
+    >
+
+    <link
+        rel="canonical"
+        href="https://webcena.site.rs/"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <!-- jsPDF -->
+    <script
+        src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+    ></script>
+
+    <style>
+
+        :root {
+            --white: #ffffff;
+            --black: #111111;
+            --text: #191919;
+            --gray: #6b6b6b;
+            --light: #e8e8e8;
+            --soft: #f5f5f5;
+            --lime: #b8ff00;
+            --max: 1500px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--white);
+            color: var(--text);
+            font-family: "DM Sans", Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input,
+        textarea,
+        select {
+            font: inherit;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+
+        /* =========================================
+           HEADER
+        ========================================= */
+
+        .header {
+            height: 82px;
+            padding: 0 5vw;
+
+            display: flex;
+            align-items: center;
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+
+            background: rgba(255,255,255,.94);
+            backdrop-filter: blur(15px);
+
+            border-bottom: 1px solid var(--light);
+        }
+
+        .logo {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 23px;
+            font-weight: 700;
+            letter-spacing: -1.2px;
+        }
+
+        .logo span {
+            font-weight: 400;
+        }
+
+        .header-right {
+            margin-left: auto;
+
+            display: flex;
+            align-items: center;
+            gap: 28px;
+        }
+
+        .header-link {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .header-link:hover {
+            opacity: .5;
+        }
+
+        .header-button {
+            padding: 11px 18px;
+            border-radius: 50px;
+
+            background: var(--black);
+            color: var(--white);
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+
+        /* =========================================
+           HERO
+        ========================================= */
+
+        .hero {
+            padding: 100px 5vw 70px;
+        }
+
+        .hero-inner {
+            max-width: var(--max);
+            margin: 0 auto;
+        }
+
+        .eyebrow {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .15em;
+        }
+
+        .hero .eyebrow {
+            margin-bottom: 35px;
+        }
+
+        .hero-title {
+            max-width: 1100px;
+
+            font-family: "Space Grotesk", sans-serif;
+            font-size: clamp(58px, 8vw, 120px);
+            line-height: .88;
+
+            letter-spacing: -.07em;
+        }
+
+        .hero-title span {
+            color: #777;
+        }
+
+        .hero-description {
+            max-width: 680px;
+
+            margin-top: 42px;
+
+            color: var(--gray);
+
+            font-size: 19px;
+            line-height: 1.6;
+        }
+
+
+        /* =========================================
+           BRIEF
+        ========================================= */
+
+        .brief-section {
+            padding: 40px 5vw 120px;
+        }
+
+        .brief-container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .brief-box {
+            border: 1px solid var(--light);
+            background: var(--white);
+        }
+
+
+        /* =========================================
+           PROGRESS
+        ========================================= */
+
+        .progress-area {
+            padding: 25px 30px 0;
+        }
+
+        .progress-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            margin-bottom: 13px;
+        }
+
+        .progress-label {
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .12em;
+        }
+
+        .progress-counter {
+            color: var(--gray);
+            font-size: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--light);
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            width: 10%;
+            height: 100%;
+            background: var(--black);
+
+            transition: width .35s ease;
+        }
+
+
+        /* =========================================
+           SLIDER
+        ========================================= */
+
+        .slider {
+            overflow: hidden;
+            position: relative;
+        }
+
+        .slides {
+            display: flex;
+
+            transition:
+                transform .45s cubic-bezier(.77,0,.18,1);
+        }
+
+        .slide {
+            flex: 0 0 100%;
+            min-width: 100%;
+
+            padding: 65px 55px 50px;
+        }
+
+        .question-number {
+            display: block;
+
+            margin-bottom: 18px;
+
+            color: #888;
+
+            font-size: 11px;
+            font-weight: 700;
+            letter-spacing: .12em;
+        }
+
+        .question-title {
+            max-width: 780px;
+
+            margin-bottom: 12px;
+
+            font-family: "Space Grotesk", sans-serif;
+
+            font-size: clamp(35px, 5vw, 60px);
+            line-height: .95;
+
+            letter-spacing: -.055em;
+        }
+
+        .question-description {
+            max-width: 650px;
+
+            margin-bottom: 35px;
+
+            color: var(--gray);
+
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+
+        /* =========================================
+           INPUTS
+        ========================================= */
+
+        .field {
+            max-width: 760px;
+        }
+
+        .text-input,
+        .textarea,
+        .select {
+            width: 100%;
+
+            padding: 18px 20px;
+
+            border: 1px solid #d9d9d9;
+            border-radius: 0;
+
+            background: #fff;
+
+            color: var(--text);
+
+            font-size: 16px;
+
+            outline: none;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease;
+        }
+
+        .text-input:focus,
+        .textarea:focus,
+        .select:focus {
+            border-color: var(--black);
+
+            box-shadow:
+                0 0 0 3px rgba(17,17,17,.06);
+        }
+
+        .textarea {
+            min-height: 150px;
+            resize: vertical;
+        }
+
+
+        /* =========================================
+           OPTIONS
+        ========================================= */
+
+        .options {
+            display: grid;
+
+            grid-template-columns:
+                repeat(2, minmax(0, 1fr));
+
+            gap: 12px;
+
+            max-width: 760px;
+        }
+
+        .option {
+            position: relative;
+        }
+
+        .option input {
+            position: absolute;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .option label {
+            min-height: 68px;
+
+            padding: 18px 20px;
+
+            display: flex;
+            align-items: center;
+
+            border: 1px solid #d9d9d9;
+
+            background: #fff;
+
+            font-size: 15px;
+            font-weight: 500;
+
+            cursor: pointer;
+
+            transition:
+                background .2s ease,
+                border-color .2s ease,
+                transform .2s ease;
+        }
+
+        .option label:hover {
+            border-color: #999;
+            transform: translateY(-1px);
+        }
+
+        .option input:checked + label {
+            background: var(--black);
+            border-color: var(--black);
+            color: var(--white);
+        }
+
+
+        /* =========================================
+           NAVIGATION
+        ========================================= */
+
+        .slider-navigation {
+            padding: 0 55px 45px;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 20px;
+        }
+
+        .nav-left,
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-button {
+            min-width: 125px;
+
+            padding: 15px 23px;
+
+            border: none;
+            border-radius: 100px;
+
+            background: var(--black);
+            color: var(--white);
+
+            font-size: 14px;
+            font-weight: 600;
+
+            transition:
+                transform .2s ease,
+                opacity .2s ease;
+        }
+
+        .nav-button:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-button.secondary {
+            background: #ededed;
+            color: var(--black);
+        }
+
+        .nav-button.secondary:hover {
+            background: #dedede;
+        }
+
+        .nav-button:disabled {
+            opacity: .3;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+
+        /* =========================================
+           RESULT
+        ========================================= */
+
+        .result {
+            display: none;
+
+            padding: 65px 55px 60px;
+        }
+
+        .result.active {
+            display: block;
+        }
+
+        .result-title {
+            max-width: 800px;
+
+            margin: 20px 0 15px;
+
+            font-family: "Space Grotesk", sans-serif;
+
+            font-size: clamp(42px, 6vw, 75px);
+
+            line-height: .92;
+            letter-spacing: -.06em;
+        }
+
+        .result-description {
+            max-width: 650px;
+
+            margin-bottom: 40px;
+
+            color: var(--gray);
+
+            line-height: 1.65;
+        }
+
+        .result-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .result-button {
+            padding: 15px 23px;
+
+            border: none;
+            border-radius: 100px;
+
+            background: var(--black);
+            color: var(--white);
+
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .result-button.lime {
+            background: var(--lime);
+            color: var(--black);
+        }
+
+        .result-button:hover {
+            transform: translateY(-2px);
+        }
+
+
+        /* =========================================
+           INFO
+        ========================================= */
+
+        .info {
+            margin-top: 25px;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            border-top: 1px solid var(--light);
+            border-bottom: 1px solid var(--light);
+        }
+
+        .info-item {
+            padding: 25px 20px 25px 0;
+        }
+
+        .info-item:not(:first-child) {
+            padding-left: 20px;
+            border-left: 1px solid var(--light);
+        }
+
+        .info-number {
+            display: block;
+
+            margin-bottom: 15px;
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .info-title {
+            font-family: "Space Grotesk", sans-serif;
+            font-size: 21px;
+        }
+
+        .info-text {
+            margin-top: 5px;
+
+            color: var(--gray);
+
+            font-size: 13px;
+        }
+
+
+        /* =========================================
+           FOOTER
+        ========================================= */
+
+        footer {
+            padding: 30px 5vw;
+
+            display: flex;
+            align-items: center;
+            gap: 30px;
+
+            background: var(--black);
+            color: var(--white);
+        }
+
+        footer p {
+            color: #777;
+            font-size: 12px;
+        }
+
+        .footer-links {
+            margin-left: auto;
+
+            display: flex;
+            gap: 20px;
+
+            font-size: 12px;
+        }
+
+        .footer-links a:hover {
+            opacity: .5;
+        }
+
+
+        /* =========================================
+           MOBILE
+        ========================================= */
+
+        @media (max-width: 700px) {
+
+            .header {
+                height: 68px;
+                padding: 0 20px;
+            }
+
+            .header-link {
+                display: none;
+            }
+
+            .header-button {
+                padding: 10px 15px;
+            }
+
+            .hero {
+                padding: 70px 20px 50px;
+            }
+
+            .hero-title {
+                font-size: 54px;
+            }
+
+            .hero-description {
+                font-size: 17px;
+            }
+
+            .brief-section {
+                padding: 20px 20px 80px;
+            }
+
+            .progress-area {
+                padding: 20px 20px 0;
+            }
+
+            .slide {
+                padding: 50px 25px 40px;
+            }
+
+            .question-title {
+                font-size: 40px;
+            }
+
+            .options {
+                grid-template-columns: 1fr;
+            }
+
+            .slider-navigation {
+                padding: 0 25px 30px;
+            }
+
+            .nav-button {
+                min-width: auto;
+                padding: 13px 18px;
+            }
+
+            .result {
+                padding: 50px 25px;
+            }
+
+            .info {
+                grid-template-columns: 1fr;
+            }
+
+            .info-item {
+                padding: 20px 0;
+            }
+
+            .info-item:not(:first-child) {
+                padding-left: 0;
+                border-left: none;
+                border-top: 1px solid var(--light);
+            }
+
+            footer {
+                display: block;
+                padding: 30px 20px;
+            }
+
+            .footer-links {
+                margin: 20px 0 0;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- =========================================
+     HEADER
+========================================= -->
+
+<header class="header">
+
+    <a href="/" class="logo">
+        Web<span>Cena</span>
+    </a>
+
+    <div class="header-right">
+
+        <a
+            href="https://cenasajta.site.rs/"
+            class="header-link"
+        >
+            Cena Sajta
+        </a>
+
+        <a
+            href="https://kurbatov.dev/sr/"
+            target="_blank"
+            rel="noopener"
+            class="header-button"
+        >
+            Kurbatov Dev ↗
+        </a>
+
+    </div>
+
+</header>
+
+
+
+<main>
+
+
+<!-- =========================================
+     HERO
+========================================= -->
+
+<section class="hero">
+
+    <div class="hero-inner">
+
+        <div class="eyebrow">
+            BESPLATAN ALAT · WEB DEVELOPMENT · SRBIJA
+        </div>
+
+        <h1 class="hero-title">
+
+            Napravite svoj
+
+            <br>
+
+            <span>
+                web brief.
+            </span>
+
+        </h1>
+
+        <p class="hero-description">
+
+            Odgovorite na 10 kratkih pitanja o vašem projektu.
+            Na kraju ćete dobiti strukturiran brief koji možete
+            poslati web dizajneru ili development timu.
+
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<!-- =========================================
+     BRIEF
+========================================= -->
+
+<section class="brief-section">
+
+    <div class="brief-container">
+
+        <div class="brief-box">
+
+
+            <!-- PROGRESS -->
+
+            <div class="progress-area">
+
+                <div class="progress-top">
+
+                    <span class="progress-label">
+                        WEBSITE BRIEF
+                    </span>
+
+                    <span
+                        class="progress-counter"
+                        id="counter"
+                    >
+                        01 / 10
+                    </span>
+
+                </div>
+
+                <div class="progress-bar">
+
+                    <div
+                        class="progress-fill"
+                        id="progressFill"
+                    ></div>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- SLIDES -->
+
+            <div
+                class="slider"
+                id="slider"
+            >
+
+                <div
+                    class="slides"
+                    id="slides"
+                >
+
+
+                    <!-- 01 -->
+
+                    <div class="slide">
+
+                        <span class="question-number">
+                            QUESTION 01
+                        </span>
+
+                        <h2 class="question-title">
+                            Kako se zove vaš biznis?
+                        </h2>
+
+                        <p class="question-description">
+                            Unesite naziv kompanije, brenda ili projekta
+                            za koji pravimo sajt.
+                        </p>
+
+                        <div class="field">
+
+                            <input
+                                type="text"
+                                class="text-input"
+                                id="businessName"
+                                placeholder="npr. Acme Studio"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- 02 -->
+
+                    <div class="slide">
+
+                        <span class="question-number">
+                            QUESTION 02
+                        </span>
+
+                        <h2 class="question-title">
+                            Šta želite da napravite?
+                        </h2>
+
+                        <p class="question-description">
+                            Izaberite tip projekta koji vam je potreban.
+                        </p>
+
+                        <div class="options">
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="projectType"
+                                    id="typeLanding"
+                                    value="Landing page"
+                                >
+                                <label for="typeLanding">
+                                    Landing page
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="projectType"
+                                    id="typeBusiness"
+                                    value="Poslovni sajt"
+                                >
+                                <label for="typeBusiness">
+                                    Poslovni sajt
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="projectType"
+                                    id="typeShop"
+                                    value="Web shop"
+                                >
+                                <label for="typeShop">
+                                    Web shop
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="projectType"
+                                    id="typeWebapp"
+                                    value="Web aplikacija"
+                                >
+                                <label for="typeWebapp">
+                                    Web aplikacija
+                                </label>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- 03 -->
+
+                    <div class="slide">
+
+                        <span class="question-number">
+                            QUESTION 03
+                        </span>
+
+                        <h2 class="question-title">
+                            Koji je glavni cilj sajta?
+                        </h2>
+
+                        <p class="question-description">
+                            Šta želite da korisnik uradi kada poseti
+                            vaš sajt?
+                        </p>
+
+                        <div class="options">
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="goal"
+                                    id="goalLeads"
+                                    value="Dobijanje upita i leadova"
+                                >
+                                <label for="goalLeads">
+                                    Dobijanje upita / leadova
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="goal"
+                                    id="goalSales"
+                                    value="Prodaja proizvoda"
+                                >
+                                <label for="goalSales">
+                                    Prodaja proizvoda
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="goal"
+                                    id="goalBrand"
+                                    value="Predstavljanje brenda"
+                                >
+                                <label for="goalBrand">
+                                    Predstavljanje brenda
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="goal"
+                                    id="goalOther"
+                                    value="Drugo"
+                                >
+                                <label for="goalOther">
+                                    Drugo
+                                </label>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- 04 -->
+
+                    <div class="slide">
+
+                        <span class="question-number">
+                            QUESTION 04
+                        </span>
+
+                        <h2 class="question-title">
+                            Ko je vaša ciljna publika?
+                        </h2>
+
+                        <p class="question-description">
+                            Opišite kome prodajete ili kome je vaš
+                            proizvod/usluga namenjen.
+                        </p>
+
+                        <div class="field">
+
+                            <textarea
+                                class="textarea"
+                                id="audience"
+                                placeholder="npr. vlasnici malih i srednjih kompanija u Srbiji..."
+                            ></textarea>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- 05 -->
+
+                    <div class="slide">
+
+                        <span class="question-number">
+                            QUESTION 05
+                        </span>
+
+                        <h2 class="question-title">
+                            Koje stranice su vam potrebne?
+                        </h2>
+
+                        <p class="question-description">
+                            Navedite glavne stranice ili sekcije koje
+                            želite na sajtu.
+                        </p>
+
+                        <div class="field">
+
+                            <textarea
+                                class="textarea"
+                                id="pages"
+                                placeholder="npr. Početna, O nama, Usluge, Projekti, Kontakt..."
+                            ></textarea>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- 06 -->
+
+                    <div class="slide">
+
+                        <span class="question-number">
+                            QUESTION 06
+                        </span>
+
+                        <h2 class="question-title">
+                            Koje funkcionalnosti su vam potrebne?
+                        </h2>
+
+                        <p class="question-description">
+                            Izaberite sve što je relevantno za vaš projekat.
+                        </p>
+
+                        <div class="options">
+
+                            <div class="option">
+                                <input
+                                    type="checkbox"
+                                    name="features"
+                                    id="featureContact"
+                                    value="Kontakt forma"
+                                >
+                                <label for="featureContact">
+                                    Kontakt forma
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="checkbox"
+                                    name="features"
+                                    id="featureBooking"
+                                    value="Booking sistem"
+                                >
+                                <label for="featureBooking">
+                                    Booking sistem
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="checkbox"
+                                    name="features"
+                                    id="featureShop"
+                                    value="Online plaćanje"
+                                >
+                                <label for="featureShop">
+                                    Online plaćanje
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="checkbox"
+                                    name="features"
+                                    id="featureCMS"
+                                    value="CMS"
+                                >
+                                <label for="featureCMS">
+                                    CMS / administracija
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="checkbox"
+                                    name="features"
+                                    id="featureCRM"
+                                    value="CRM integracija"
+                                >
+                                <label for="featureCRM">
+                                    CRM integracija
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="checkbox"
+                                    name="features"
+                                    id="featureOther"
+                                    value="Druge funkcionalnosti"
+                                >
+                                <label for="featureOther">
+                                    Druge funkcionalnosti
+                                </label>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- 07 -->
+
+                    <div class="slide">
+
+                        <span class="question-number">
+                            QUESTION 07
+                        </span>
+
+                        <h2 class="question-title">
+                            Imate li postojeći sajt?
+                        </h2>
+
+                        <p class="question-description">
+                            Ako imate postojeći sajt, navedite njegovu
+                            adresu. Ako nemate, ostavite prazno.
+                        </p>
+
+                        <div class="field">
+
+                            <input
+                                type="url"
+                                class="text-input"
+                                id="currentWebsite"
+                                placeholder="https://example.com"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- 08 -->
+
+                    <div class="slide">
+
+                        <span class="question-number">
+                            QUESTION 08
+                        </span>
+
+                        <h2 class="question-title">
+                            Koliki je planirani budžet?
+                        </h2>
+
+                        <p class="question-description">
+                            Okviran budžet nam pomaže da realnije
+                            procenimo obim projekta.
+                        </p>
+
+                        <div class="options">
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="budget"
+                                    id="budget1"
+                                    value="Do 500 €"
+                                >
+                                <label for="budget1">
+                                    Do 500 €
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="budget"
+                                    id="budget2"
+                                    value="500–1.000 €"
+                                >
+                                <label for="budget2">
+                                    500–1.000 €
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="budget"
+                                    id="budget3"
+                                    value="1.000–2.500 €"
+                                >
+                                <label for="budget3">
+                                    1.000–2.500 €
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="budget"
+                                    id="budget4"
+                                    value="2.500–5.000 €"
+                                >
+                                <label for="budget4">
+                                    2.500–5.000 €
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="budget"
+                                    id="budget5"
+                                    value="5.000 €+"
+                                >
+                                <label for="budget5">
+                                    5.000 €+
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="budget"
+                                    id="budget6"
+                                    value="Nisam siguran"
+                                >
+                                <label for="budget6">
+                                    Nisam siguran
+                                </label>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- 09 -->
+
+                    <div class="slide">
+
+                        <span class="question-number">
+                            QUESTION 09
+                        </span>
+
+                        <h2 class="question-title">
+                            Kada želite da sajt bude spreman?
+                        </h2>
+
+                        <p class="question-description">
+                            Izaberite okvirni rok.
+                        </p>
+
+                        <div class="options">
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="timeline"
+                                    id="timeUrgent"
+                                    value="Što pre"
+                                >
+                                <label for="timeUrgent">
+                                    Što pre
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="timeline"
+                                    id="timeMonth"
+                                    value="U narednih 30 dana"
+                                >
+                                <label for="timeMonth">
+                                    U narednih 30 dana
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="timeline"
+                                    id="time2"
+                                    value="1–2 meseca"
+                                >
+                                <label for="time2">
+                                    1–2 meseca
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="timeline"
+                                    id="time3"
+                                    value="3+ meseca"
+                                >
+                                <label for="time3">
+                                    3+ meseca
+                                </label>
+                            </div>
+
+                            <div class="option">
+                                <input
+                                    type="radio"
+                                    name="timeline"
+                                    id="timeFlexible"
+                                    value="Fleksibilno"
+                                >
+                                <label for="timeFlexible">
+                                    Fleksibilno
+                                </label>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- 10 -->
+
+                    <div class="slide">
+
+                        <span class="question-number">
+                            QUESTION 10
+                        </span>
+
+                        <h2 class="question-title">
+                            Šta još treba da znamo?
+                        </h2>
+
+                        <p class="question-description">
+                            Dodajte sve što smatrate važnim — stil,
+                            konkurente, reference, posebne zahteve,
+                            tehnologiju ili bilo koju drugu informaciju.
+                        </p>
+
+                        <div class="field">
+
+                            <textarea
+                                class="textarea"
+                                id="additional"
+                                placeholder="Napišite dodatne informacije..."
+                            ></textarea>
+
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+
+
+            <!-- NAVIGATION -->
+
+            <div
+                class="slider-navigation"
+                id="navigation"
+            >
+
+                <div class="nav-left">
+
+                    <button
+                        type="button"
+                        class="nav-button secondary"
+                        id="prevButton"
+                        onclick="previousSlide()"
+                    >
+                        ← Nazad
+                    </button>
+
+                </div>
+
+
+                <div class="nav-right">
+
+                    <button
+                        type="button"
+                        class="nav-button"
+                        id="nextButton"
+                        onclick="nextSlide()"
+                    >
+                        Dalje →
+                    </button>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- RESULT -->
+
+            <div
+                class="result"
+                id="result"
+            >
+
+                <div class="eyebrow">
+                    BRIEF JE SPREMAN
+                </div>
+
+                <h2 class="result-title">
+                    Vaš website brief je završen.
+                </h2>
+
+                <p class="result-description">
+
+                    Sada možete preuzeti profesionalno strukturiran
+                    PDF dokument sa svim odgovorima. Možete ga poslati
+                    web dizajneru, developeru ili development agenciji
+                    kao osnovu za izradu ponude.
+
+                </p>
+
+
+                <div class="result-actions">
+
+                    <button
+                        type="button"
+                        class="result-button lime"
+                        onclick="generatePDF()"
+                    >
+                        Preuzmi PDF brief
+                    </button>
+
+                    <button
+                        type="button"
+                        class="result-button"
+                        onclick="restartBrief()"
+                    >
+                        Popuni ponovo
+                    </button>
+
+                    <a
+                        href="https://kurbatov.dev/sr/"
+                        target="_blank"
+                        rel="noopener"
+                        class="result-button"
+                    >
+                        Zatraži ponudu ↗
+                    </a>
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+
+
+        <!-- INFO -->
+
+        <div class="info">
+
+            <div class="info-item">
+
+                <span class="info-number">
+                    01
+                </span>
+
+                <div class="info-title">
+                    10 pitanja
+                </div>
+
+                <div class="info-text">
+                    Samo najvažnije informacije.
+                </div>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span class="info-number">
+                    02
+                </span>
+
+                <div class="info-title">
+                    5 minuta
+                </div>
+
+                <div class="info-text">
+                    Bez komplikovanih formulara.
+                </div>
+
+            </div>
+
+
+            <div class="info-item">
+
+                <span class="info-number">
+                    03
+                </span>
+
+                <div class="info-title">
+                    PDF
+                </div>
+
+                <div class="info-text">
+                    Spreman dokument za slanje.
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+</main>
+
+
+
+<!-- =========================================
+     FOOTER
+========================================= -->
+
+<footer>
+
+    <div class="logo">
+        Web<span>Cena</span>
+    </div>
+
+    <p>
+        Besplatan alat za pripremu web projekta
+    </p>
+
+    <div class="footer-links">
+
+        <a
+            href="https://cenasajta.site.rs/"
+        >
+            Cena Sajta
+        </a>
+
+        <a
+            href="https://kurbatov.dev/sr/"
+            target="_blank"
+            rel="noopener"
+        >
+            Kurbatov Dev ↗
+        </a>
+
+    </div>
+
+</footer>
+
+
+
+<script>
+
+    /* =========================================
+       STATE
+    ========================================= */
+
+    let currentSlide = 0;
+
+    const totalSlides = 10;
+
+    const slides = document.getElementById("slides");
+
+    const progressFill =
+        document.getElementById("progressFill");
+
+    const counter =
+        document.getElementById("counter");
+
+    const prevButton =
+        document.getElementById("prevButton");
+
+    const nextButton =
+        document.getElementById("nextButton");
+
+    const navigation =
+        document.getElementById("navigation");
+
+    const result =
+        document.getElementById("result");
+
+
+
+    /* =========================================
+       UPDATE SLIDE
+    ========================================= */
+
+    function updateSlider() {
+
+        slides.style.transform =
+            "translateX(-" + (currentSlide * 100) + "%)";
+
+        const step =
+            currentSlide + 1;
+
+        counter.textContent =
+            String(step).padStart(2, "0")
+            + " / "
+            + totalSlides;
+
+        progressFill.style.width =
+            ((step / totalSlides) * 100) + "%";
+
+
+        prevButton.disabled =
+            currentSlide === 0;
+
+
+        if (currentSlide === totalSlides - 1) {
+
+            nextButton.textContent =
+                "Završi →";
+
+        } else {
+
+            nextButton.textContent =
+                "Dalje →";
+
+        }
+
+    }
+
+
+
+    /* =========================================
+       VALIDATION
+    ========================================= */
+
+    function validateCurrentSlide() {
+
+        const slide =
+            document.querySelectorAll(".slide")[currentSlide];
+
+
+        /* TEXT INPUT */
+
+        const textInput =
+            slide.querySelector(
+                "input[type='text']"
+            );
+
+        if (textInput && !textInput.value.trim()) {
+
+            textInput.focus();
+
+            return false;
+
+        }
+
+
+        /* RADIO */
+
+        const radioGroups =
+            [...slide.querySelectorAll(
+                "input[type='radio']"
+            )];
+
+
+        if (radioGroups.length > 0) {
+
+            const names =
+                [...new Set(
+                    radioGroups.map(
+                        radio => radio.name
+                    )
+                )];
+
+
+            for (const name of names) {
+
+                const checked =
+                    slide.querySelector(
+                        "input[name='" +
+                        name +
+                        "']:checked"
+                    );
+
+                if (!checked) {
+
+                    return false;
+
+                }
+
+            }
+
+        }
+
+
+        /* TEXTAREA */
+
+        const textarea =
+            slide.querySelector(
+                "textarea"
+            );
+
+        if (
+            textarea &&
+            currentSlide !== 9 &&
+            !textarea.value.trim()
+        ) {
+
+            textarea.focus();
+
+            return false;
+
+        }
+
+
+        return true;
+
+    }
+
+
+
+    /* =========================================
+       NEXT
+    ========================================= */
+
+    function nextSlide() {
+
+        if (!validateCurrentSlide()) {
+
+            alert(
+                "Molimo vas da odgovorite na ovo pitanje pre nego što nastavite."
+            );
+
+            return;
+
+        }
+
+
+        if (currentSlide < totalSlides - 1) {
+
+            currentSlide++;
+
+            updateSlider();
+
+        } else {
+
+            finishBrief();
+
+        }
+
+    }
+
+
+
+    /* =========================================
+       PREVIOUS
+    ========================================= */
+
+    function previousSlide() {
+
+        if (currentSlide > 0) {
+
+            currentSlide--;
+
+            updateSlider();
+
+        }
+
+    }
+
+
+
+    /* =========================================
+       GET RADIO VALUE
+    ========================================= */
+
+    function getRadioValue(name) {
+
+        const checked =
+            document.querySelector(
+                "input[name='" +
+                name +
+                "']:checked"
+            );
+
+        return checked
+            ? checked.value
+            : "Nije navedeno";
+
+    }
+
+
+
+    /* =========================================
+       GET CHECKBOXES
+    ========================================= */
+
+    function getFeatures() {
+
+        const checked =
+            document.querySelectorAll(
+                "input[name='features']:checked"
+            );
+
+        if (!checked.length) {
+
+            return "Nije navedeno";
+
+        }
+
+        return [...checked]
+            .map(item => item.value)
+            .join(", ");
+
+    }
+
+
+
+    /* =========================================
+       FINISH
+    ========================================= */
+
+    function finishBrief() {
+
+        document
+            .querySelector(".slider")
+            .style.display = "none";
+
+        navigation.style.display = "none";
+
+        result.classList.add("active");
+
+        counter.textContent = "DONE";
+
+        progressFill.style.width = "100%";
+
+        window.scrollTo({
+            top:
+                document.querySelector(
+                    ".brief-section"
+                ).offsetTop - 30,
+            behavior: "smooth"
+        });
+
+    }
+
+
+
+    /* =========================================
+       COLLECT DATA
+    ========================================= */
+
+    function collectData() {
+
+        return {
+
+            businessName:
+                document
+                    .getElementById("businessName")
+                    .value
+                    .trim()
+                    || "Nije navedeno",
+
+            projectType:
+                getRadioValue("projectType"),
+
+            goal:
+                getRadioValue("goal"),
+
+            audience:
+                document
+                    .getElementById("audience")
+                    .value
+                    .trim()
+                    || "Nije navedeno",
+
+            pages:
+                document
+                    .getElementById("pages")
+                    .value
+                    .trim()
+                    || "Nije navedeno",
+
+            features:
+                getFeatures(),
+
+            currentWebsite:
+                document
+                    .getElementById("currentWebsite")
+                    .value
+                    .trim()
+                    || "Nije navedeno",
+
+            budget:
+                getRadioValue("budget"),
+
+            timeline:
+                getRadioValue("timeline"),
+
+            additional:
+                document
+                    .getElementById("additional")
+                    .value
+                    .trim()
+                    || "Nije navedeno"
+
+        };
+
+    }
+
+
+
+    /* =========================================
+       PDF
+    ========================================= */
+
+    function generatePDF() {
+
+        const data =
+            collectData();
+
+        const {
+            jsPDF
+        } = window.jspdf;
+
+        const pdf =
+            new jsPDF({
+                orientation: "portrait",
+                unit: "mm",
+                format: "a4"
+            });
+
+
+        const pageWidth =
+            pdf.internal.pageSize.getWidth();
+
+        const pageHeight =
+            pdf.internal.pageSize.getHeight();
+
+        const margin = 18;
+
+        let y = 22;
+
+
+        /* HEADER */
+
+        pdf.setFont("helvetica", "bold");
+
+        pdf.setFontSize(24);
+
+        pdf.text(
+            "WEBSITE BRIEF",
+            margin,
+            y
+        );
+
+        y += 8;
+
+
+        pdf.setFont("helvetica", "normal");
+
+        pdf.setFontSize(10);
+
+        pdf.setTextColor(
+            110,
+            110,
+            110
+        );
+
+        pdf.text(
+            "Generated with WebCena.site.rs",
+            margin,
+            y
+        );
+
+        y += 13;
+
+
+        /* LINE */
+
+        pdf.setDrawColor(
+            220,
+            220,
+            220
+        );
+
+        pdf.line(
+            margin,
+            y,
+            pageWidth - margin,
+            y
+        );
+
+        y += 12;
+
+
+        pdf.setTextColor(
+            20,
+            20,
+            20
+        );
+
+
+        /* DATA */
+
+        const sections = [
+
+            [
+                "1. Business",
+                data.businessName
+            ],
+
+            [
+                "2. Project type",
+                data.projectType
+            ],
+
+            [
+                "3. Main goal",
+                data.goal
+            ],
+
+            [
+                "4. Target audience",
+                data.audience
+            ],
+
+            [
+                "5. Required pages",
+                data.pages
+            ],
+
+            [
+                "6. Functionality",
+                data.features
+            ],
+
+            [
+                "7. Existing website",
+                data.currentWebsite
+            ],
+
+            [
+                "8. Budget",
+                data.budget
+            ],
+
+            [
+                "9. Timeline",
+                data.timeline
+            ],
+
+            [
+                "10. Additional information",
+                data.additional
+            ]
+
+        ];
+
+
+        sections.forEach(
+            section => {
+
+                const title =
+                    section[0];
+
+                const value =
+                    section[1];
+
+
+                pdf.setFont(
+                    "helvetica",
+                    "bold"
+                );
+
+                pdf.setFontSize(11);
+
+                pdf.text(
+                    title,
+                    margin,
+                    y
+                );
+
+                y += 6;
+
+
+                pdf.setFont(
+                    "helvetica",
+                    "normal"
+                );
+
+                pdf.setFontSize(10);
+
+                const lines =
+                    pdf.splitTextToSize(
+                        value,
+                        pageWidth -
+                        margin * 2
+                    );
+
+
+                pdf.text(
+                    lines,
+                    margin,
+                    y
+                );
+
+
+                y +=
+                    lines.length * 5 +
+                    7;
+
+
+                if (
+                    y >
+                    pageHeight - 25
+                ) {
+
+                    pdf.addPage();
+
+                    y = 22;
+
+                }
+
+            }
+        );
+
+
+        /* FOOTER */
+
+        pdf.setFontSize(8);
+
+        pdf.setTextColor(
+            130,
+            130,
+            130
+        );
+
+        pdf.text(
+            "Website Brief Generator · webcena.site.rs",
+            margin,
+            pageHeight - 10
+        );
+
+
+        const filename =
+            (
+                data.businessName
+                .replace(
+                    /[^a-z0-9а-яё\s-]/gi,
+                    ""
+                )
+                .trim()
+                .replace(/\s+/g, "-")
+                .toLowerCase()
+                ||
+                "website"
+            )
+            + "-brief.pdf";
+
+
+        pdf.save(filename);
+
+    }
+
+
+
+    /* =========================================
+       RESTART
+    ========================================= */
+
+    function restartBrief() {
+
+        document
+            .querySelectorAll(
+                "input"
+            )
+            .forEach(
+                input => {
+
+                    if (
+                        input.type === "radio" ||
+                        input.type === "checkbox"
+                    ) {
+
+                        input.checked = false;
+
+                    } else {
+
+                        input.value = "";
+
+                    }
+
+                }
+            );
+
+
+        document
+            .querySelectorAll(
+                "textarea"
+            )
+            .forEach(
+                textarea => {
+
+                    textarea.value = "";
+
+                }
+            );
+
+
+        currentSlide = 0;
+
+
+        document
+            .querySelector(".slider")
+            .style.display = "block";
+
+        navigation.style.display = "flex";
+
+        result.classList.remove("active");
+
+        updateSlider();
+
+
+        window.scrollTo({
+            top:
+                document.querySelector(
+                    ".brief-section"
+                ).offsetTop - 30,
+            behavior: "smooth"
+        });
+
+    }
+
+
+
+    /* =========================================
+       INIT
+    ========================================= */
+
+    updateSlider();
+
+
+</script>
+
+</body>
+</html>
